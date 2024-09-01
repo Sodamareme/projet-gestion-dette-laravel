@@ -72,4 +72,130 @@ class ArticleController extends Controller
             'message' => 'Liste des articles'
         ], 200);
     }
+
+    // Méthode pour obtenir un article par ID
+    public function showById($id)
+    {
+        $article = Article::find($id);
+
+        if (!$article) {
+            return response()->json([
+                'status' => 411,
+                'data' => null,
+                'message' => 'Objet non trouvé'
+            ], 411);
+        }
+
+        return response()->json([
+            'status' => 200,
+            'data' => $article,
+            'message' => 'Article trouvé'
+        ], 200);
+    }
+
+    // Méthode pour obtenir un article par libellé
+    public function showByLibelle(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'libelle' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors(), 'message' => 'Erreur de validation'], 411);
+        }
+
+        $libelle = $request->input('libelle');
+        $article = Article::where('libelle', $libelle)->first();
+
+        if (!$article) {
+            return response()->json([
+                'status' => 411,
+                'data' => null,
+                'message' => 'Objet non trouvé'
+            ], 411);
+        }
+
+        return response()->json([
+            'status' => 200,
+            'data' => $article,
+            'message' => 'Article trouvé'
+        ], 200);
+    }
+    public function updateStockById(Request $request, $id)
+    {
+        // Validation des données
+        $validator = Validator::make($request->all(), [
+            'qteStock' => 'required|numeric|min:0',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['data' => null, 'message' => 'Validation échouée'], 411);
+        }
+
+        // Trouver l'article par ID
+        $article = Article::find($id);
+
+        if (!$article) {
+            return response()->json(['data' => null, 'message' => 'Objet non trouvé'], 411);
+        }
+
+        // Mise à jour de la quantité en stock
+        $article->quantiteStock = $request->input('qteStock');
+        $article->save();
+
+        return response()->json([
+            'data' => $article,
+            'message' => 'qte stock mis a jour'
+        ], 200);
+    }
+
+    public function updateStockByIds(Request $request)
+    {
+        // Validation des données
+    $validator = Validator::make($request->all(), [
+        'articles' => 'required|array',
+        'articles.*.id' => 'required|exists:articles,id',
+        'articles.*.qteStock' => 'required|numeric|min:0',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(['articles' => null, 'message' => 'Validation échouée'], 411);
+    }
+
+    $data = $request->input('articles'); // Ajustez en fonction de la façon dont vous récupérez les données d'entrée
+    $success = [];
+    
+    
+$errors = [];
+
+    // Assurez-vous que $data est un tableau
+    if (is_array($data)) {
+        foreach ($data as $item) {
+            // Trouver l'article par ID
+            $article = Article::find($item['id']);
+
+            if ($article) {
+                
+     
+// Mise à jour de la quantité en stock
+                $article->quantiteStock = $item['qteStock'];
+                $article->save();
+                $success[] = $article;
+            } else {
+                $errors[] = [
+                    'id' => $item['id'],
+                    'message' => 'Article non trouvé'
+                ];
+            }
+        }
+    } else {
+        // Gérer le cas où $data n'est pas un tableau
+        return response()->json(['error' => 'Format de données invalide'], 400);
+    }
+
+    return response()->json([
+        'success' => $success,
+        'errors' => $errors
+    ], 200);
+    }
 }

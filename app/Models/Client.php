@@ -9,12 +9,13 @@ class Client extends Model
 {
     // Définir les attributs qui peuvent être attribués en masse
     protected $fillable = [
-        'nom',
-        'prenom',
+        'surnom',
         'telephone',
         'photo',
-        'login',
-        'password',
-        'surnom', // Ajoutez ici le champ surnom
     ];
+    public function dettes()
+{
+    return $this->hasMany(Dette::class, 'client_id');
+}
+    
 }
