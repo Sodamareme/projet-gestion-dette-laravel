@@ -44,7 +44,7 @@ Route::post('login', [AuthController::class, 'login']);
 Route::middleware(['auth:api', 'role:Admin'])->group(function () {
         //ajout user
 Route::post('register', [AuthController::class, 'register']);
-// lister les coomptes users
+// lister les comptes users
 Route::get('/usersAll', [AuthController::class, 'listUsers']);
 // Lister tous les comptes utilisateurs ayant ce role et qui son active ou pas
 Route::get('/users', [AuthController::class, 'listUsersByRole']);
@@ -78,8 +78,6 @@ Route::post('/articles', [ArticleController::class, 'store']);
     Route::post('articles/stock', [ArticleController::class, 'updateStockByIds']);
    // Lister les informations d'un client a partir de l'id
 Route::get('clients/{id}', [ClientController::class, 'showClient']);
-// Lister les dettes d'un client , les dettes affiches n'ont pas de details
-Route::post('clients/{id}/dettes', [ClientController::class, 'showClientDebts']);
 // Lister les dettes d'un client , les dettes affiches n'ont pas de details
 Route::post('clients/{id}/dettes', [ClientController::class, 'showClientDebts']);
 // Afficher les informations du client ainsi le compte user

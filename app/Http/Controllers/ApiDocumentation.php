@@ -18,6 +18,8 @@ use Illuminate\Routing\Controller as BaseController;
  *     )
  * )
  */
+
+
 class ApiDocumentation extends BaseController
 {
     // This class does not need any methods or properties

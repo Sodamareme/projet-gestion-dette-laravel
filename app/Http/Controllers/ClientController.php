@@ -81,49 +81,181 @@ class ClientController extends Controller
         return response()->json([
             'client' => $client,
         ], 201);
-    }
-     /**
-     * @OA\Get(
+ }
+ /**
+ * @OA\Get(
+ *     path="/clients/{id}",
+ *     summary="Obtenir les informations d'un client par ID",
+ *     description="Récupère les informations d'un client en utilisant son ID.",
+ *     tags={"Clients"},
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="ID du client",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Client trouvé avec succès",
+ *         @OA\JsonContent(
+ *             @OA\Property(
+ *                 property="data",
+ *                 type="object",
+ *                 @OA\Property(property="id", type="integer", example=1, description="ID du client"),
+ *                 @OA\Property(property="name", type="string", example="John Doe", description="Nom du client"),
+ *                 @OA\Property(property="email", type="string", example="john.doe@example.com", description="Email du client"),
+ *                 @OA\Property(property="phone", type="string", example="123-456-7890", description="Numéro de téléphone du client")
+ *             ),
+ *             @OA\Property(property="message", type="string", example="Client trouvé", description="Message de réponse")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Client non trouvé",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="data", type="null"),
+ *             @OA\Property(property="message", type="string", example="Objet non trouvé", description="Message de réponse")
+ *         )
+ *     )
+ * )
+ */
+ public function showClient($id)
+ {
+     // Trouver le client par ID
+     $client = Client::find($id);
+
+     // Si le client n'existe pas, retour d'une réponse 404
+     if (!$client) {
+         return response()->json([
+             'data' => null,
+             'message' => 'Objet non trouvé'
+         ], 404);
+     }
+
+     // Retourner les informations du client
+     return response()->json([
+         'data' => $client,
+         'message' => 'Client trouvé'
+     ], 200);
+ }
+/**
+ * @OA\Post(
+ *     path="/clients/{id}/dettes",
+ *     summary="Obtenir les dettes d'un client par ID",
+ *     description="Récupère les informations d'un client ainsi que ses dettes en utilisant son ID.",
+ *     tags={"Clients"},
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="ID du client",
+ *         @OA\Schema(
+ *             type="integer"
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Client et dettes trouvés avec succès",
+ *         @OA\JsonContent(
+ *             @OA\Property(
+ *                 property="data",
+ *                 type="object",
+ *                 @OA\Property(property="id", type="integer", example=1, description="ID du client"),
+ *                 @OA\Property(property="name", type="string", example="John Doe", description="Nom du client"),
+ *                 @OA\Property(property="email", type="string", example="john.doe@example.com", description="Email du client"),
+ *                 @OA\Property(property="phone", type="string", example="123-456-7890", description="Numéro de téléphone du client"),
+ *                 @OA\Property(
+ *                     property="dettes",
+ *                     type="array",
+ *                     @OA\Items(
+ *                         type="object",
+ *                         @OA\Property(property="id", type="integer", example=1, description="ID de la dette"),
+ *                         @OA\Property(property="amount", type="number", format="float", example=100.00, description="Montant de la dette"),
+ *                         @OA\Property(property="due_date", type="string", format="date", example="2024-12-31", description="Date d'échéance de la dette")
+ *                     )
+ *                 )
+ *             ),
+ *             @OA\Property(property="message", type="string", example="Client et dettes trouvés", description="Message de réponse")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Client non trouvé",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="data", type="null"),
+ *             @OA\Property(property="message", type="string", example="Objet non trouvé", description="Message de réponse")
+ *         )
+ *     )
+ * )
+ */
+
+ public function showClientDebts($id)
+ {
+     // Trouver le client par ID
+     $client = Client::with('dettes')->find($id);
+
+     // Si le client n'existe pas, retour d'une réponse 404
+     if (!$client) {
+         return response()->json([
+             'data' => null,
+             'message' => 'Objet non trouvé'
+         ], 404);
+     }
+
+     // Retourner les informations du client et ses dettes
+     return response()->json([
+         'data' => $client, // Les dettes sont incluses automatiquement grâce à la relation 'dettes'
+         'message' => 'Client trouvé'
+     ], 200);
+ }
+    /**
+     * @OA\Post(
      *     path="/clients/{id}/user",
-     *     summary="Get client and associated user account",
+     *     summary="Afficher les informations du client avec son utilisateur associé",
+     *     description="Récupère les informations d'un client ainsi que les informations de l'utilisateur associé en utilisant l'ID du client.",
      *     tags={"Clients"},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         @OA\Schema(type="integer"),
-     *         description="ID of the client"
+     *         description="ID du client",
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Client with user details found",
+     *         description="Client trouvé avec succès",
      *         @OA\JsonContent(
-     *             @OA\Property(property="data", ref="#/components/schemas/ClientUser"),
-     *             @OA\Property(property="message", type="string", example="Client with user details found")
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=1, description="ID du client"),
+     *                 @OA\Property(property="name", type="string", example="John Doe", description="Nom du client"),
+     *                 @OA\Property(
+     *                     property="user",
+     *                     type="object",
+     *                     @OA\Property(property="id", type="integer", example=1, description="ID de l'utilisateur associé"),
+     *                     @OA\Property(property="username", type="string", example="johndoe", description="Nom d'utilisateur"),
+     *                     @OA\Property(property="email", type="string", example="john.doe@example.com", description="Adresse e-mail de l'utilisateur")
+     *                 ),
+     *                 @OA\Property(property="message", type="string", example="Client trouvé", description="Message de réponse")
+     *             )
      *         )
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Client not found",
+     *         description="Client non trouvé",
      *         @OA\JsonContent(
      *             @OA\Property(property="data", type="null"),
-     *             @OA\Property(property="message", type="string", example="Object not found")
+     *             @OA\Property(property="message", type="string", example="Objet non trouvé", description="Message de réponse")
      *         )
      *     )
      * )
      */
-    /**
- * @OA\Schema(
- *     schema="ClientUser",
- *     type="object",
- *     required={"nom", "prenom", "telephone"},
- *     @OA\Property(property="nom", type="string", example="Doe"),
- *     @OA\Property(property="prenom", type="string", example="John"),
- *     @OA\Property(property="telephone", type="string", example="1234567890"),
- *     @OA\Property(property="adresse", type="string", example="123 Main St"),
- *     @OA\Property(property="photo", type="string", format="binary")
- * )
- */
 
     public function showClientWithUser($id)
     {
@@ -147,7 +279,7 @@ class ClientController extends Controller
    /**
      * @OA\Get(
      *     path="/clients",
-     *     summary="List clients",
+     *     summary="lister tout les clients ou lister les clients avec compte ou sans compte et lister client avec compte active ou non",
      *     tags={"Clients"},
      *     @OA\Parameter(
      *         name="comptes",

@@ -7,17 +7,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 /**
- * @OA\Info(
- *     title="My API Documentation",
- *     version="1.0.0",
- *     description="This is the API documentation for my Laravel application.",
- *     @OA\Contact(
- *         email="support@example.com"
- *     ),
- *     @OA\License(
- *         name="Apache 2.0",
- *         url="http://www.apache.org/licenses/LICENSE-2.0.html"
- *     )
+ * @OA\Tag(
+ *     name="Clients",
+ *     description="API endpoints for managing clients"
  * )
  */
 
@@ -35,6 +27,7 @@ use Illuminate\Validation\ValidationException;
  *     @OA\Property(property="role_id", type="integer", example=1)
  * )
  */
+
 class AuthController extends Controller
 {
     /**
@@ -183,7 +176,29 @@ class AuthController extends Controller
             ], 401);
         }
     }
-
+/**
+ * @OA\Get(
+ *     path="/usersAll",
+ *     summary="Liste tous les utilisateurs",
+ *     tags={"Users"},
+ *     @OA\Response(
+ *         response=200,
+ *         description="Liste des utilisateurs récupérée avec succès",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string", example="Liste des utilisateurs récupérée avec succès"),
+ *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/User"))
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=204,
+ *         description="Aucun utilisateur trouvé",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string", example="Aucun utilisateur trouvé"),
+ *             @OA\Property(property="data", type="null")
+ *         )
+ *     )
+ * )
+ */
     public function listUsers()
     {
         // Récupérer tous les utilisateurs
@@ -203,7 +218,44 @@ class AuthController extends Controller
             'message' => 'Liste des utilisateurs récupérée avec succès'
         ], 200);
     }
-    
+    /**
+ * @OA\Get(
+ *     path="/users",
+ *     summary="Liste les utilisateurs par rôle",
+ *     tags={"Users"},
+ *     @OA\Parameter(
+ *         name="role",
+ *         in="query",
+ *         required=true,
+ *         description="Nom du rôle pour filtrer les utilisateurs",
+ *         @OA\Schema(type="string")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Liste des utilisateurs récupérée avec succès",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string", example="Liste des utilisateurs récupérée avec succès"),
+ *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/User"))
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Le rôle est requis",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string", example="Le rôle est requis."),
+ *             @OA\Property(property="data", type="null")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Rôle non trouvé",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string", example="Rôle non trouvé"),
+ *             @OA\Property(property="data", type="null")
+ *         )
+ *     )
+ * )
+ */
     public function listUsersByRole(Request $request)
     {
         // Récupérer le rôle depuis les paramètres de la requête

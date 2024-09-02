@@ -6,9 +6,55 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Article;
 use Illuminate\Support\Facades\Auth;
-
+/**
+ * @OA\Tag(
+ *     name="Articles",
+ *     description="API endpoints for managing clients"
+ * )
+ */
 class ArticleController extends Controller
 {
+  /**
+     * @OA\Post(
+     *     path="/articles",
+     *     summary="Créer un nouvel article",
+     *     tags={"Articles"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 type="object",
+     *                 required={"libelle", "prix", "quantiteStock"},
+     *                 @OA\Property(property="libelle", type="string", example="Article Exemplar"),
+     *                 @OA\Property(property="prix", type="number", format="float", example=99.99),
+     *                 @OA\Property(property="quantiteStock", type="integer", example=10)
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Article créé avec succès",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Article enregistré avec succès"),
+     *             @OA\Property(property="article", type="object", 
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="libelle", type="string", example="Article Exemplar"),
+     *                 @OA\Property(property="prix", type="number", format="float", example=99.99),
+     *                 @OA\Property(property="quantiteStock", type="integer", example=10)
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=411,
+     *         description="Erreur de validation",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="errors", type="object", additionalProperties={"type":"array", "items":{"type":"string"}}),
+     *             @OA\Property(property="message", type="string", example="Erreur de validation")
+     *         )
+     *     )
+     * )
+     */
     public function store(Request $request)
     {
         // $this->authorize('access', Article::class);
@@ -35,6 +81,40 @@ class ArticleController extends Controller
 
         return response()->json(['message' => 'Article enregistré avec succès', 'article' => $article], 201);
     }
+       /**
+     * @OA\Get(
+     *     path="/articles",
+     *     summary="Lister tous les articles",
+     *     tags={"Articles"},
+     *     @OA\Parameter(
+     *         name="disponible",
+     *         in="query",
+     *         description="Filtrer les articles en fonction de leur disponibilité",
+     *         required=false,
+     *         @OA\Schema(type="string", enum={"oui", "non"})
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Liste des articles",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="integer", example=200),
+     *             @OA\Property(property="data", type="array", 
+     *                 @OA\Items(type="object",
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="libelle", type="string", example="Article Exemplar"),
+     *                     @OA\Property(property="prix", type="number", format="float", example=99.99),
+     *                     @OA\Property(property="quantiteStock", type="integer", example=10)
+     *                 )
+     *             ),
+     *             @OA\Property(property="message", type="string", example="Liste des articles")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="Aucun article trouvé"
+     *     )
+     * )
+     */
       // Méthode pour lister tous les articles
     public function index(Request $request)
     {
@@ -68,7 +148,43 @@ class ArticleController extends Controller
             'message' => 'Liste des articles'
         ], 200);
     }
-
+  /**
+     * @OA\Get(
+     *     path="/articles/{id}",
+     *     summary="Obtenir un article par ID",
+     *     tags={"Articles"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de l'article",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Article trouvé",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="integer", example=200),
+     *             @OA\Property(property="data", type="object", 
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="libelle", type="string", example="Article Exemplar"),
+     *                 @OA\Property(property="prix", type="number", format="float", example=99.99),
+     *                 @OA\Property(property="quantiteStock", type="integer", example=10)
+     *             ),
+     *             @OA\Property(property="message", type="string", example="Article trouvé")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=411,
+     *         description="Article non trouvé",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="integer", example=411),
+     *             @OA\Property(property="data", type="object"),
+     *             @OA\Property(property="message", type="string", example="Objet non trouvé")
+     *         )
+     *     )
+     * )
+     */
     // Méthode pour obtenir un article par ID
     public function showById($id)
     {
@@ -88,7 +204,47 @@ class ArticleController extends Controller
             'message' => 'Article trouvé'
         ], 200);
     }
-
+ /**
+     * @OA\Post(
+     *     path="/articles/libelle",
+     *     summary="Obtenir un article par libellé",
+     *     tags={"Articles"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 type="object",
+     *                 required={"libelle"},
+     *                 @OA\Property(property="libelle", type="string", example="Article Exemplar")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Article trouvé",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="integer", example=200),
+     *             @OA\Property(property="data", type="object", 
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="libelle", type="string", example="Article Exemplar"),
+     *                 @OA\Property(property="prix", type="number", format="float", example=99.99),
+     *                 @OA\Property(property="quantiteStock", type="integer", example=10)
+     *             ),
+     *             @OA\Property(property="message", type="string", example="Article trouvé")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=411,
+     *         description="Article non trouvé",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="integer", example=411),
+     *             @OA\Property(property="data", type="object"),
+     *             @OA\Property(property="message", type="string", example="Objet non trouvé")
+     *         )
+     *     )
+     * )
+     */
     // Méthode pour obtenir un article par libellé
     public function showByLibelle(Request $request)
     {
@@ -117,6 +273,53 @@ class ArticleController extends Controller
             'message' => 'Article trouvé'
         ], 200);
     }
+      /**
+     * @OA\Patch(
+     *     path="/articles/{id}",
+     *     summary="Mettre à jour la quantité en stock d'un article par ID",
+     *     tags={"Articles"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de l'article",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 type="object",
+     *                 required={"qteStock"},
+     *                 @OA\Property(property="qteStock", type="integer", example=15)
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Quantité en stock mise à jour",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", type="object", 
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="libelle", type="string", example="Article Exemplar"),
+     *                 @OA\Property(property="prix", type="number", format="float", example=99.99),
+     *                 @OA\Property(property="quantiteStock", type="integer", example=15)
+     *             ),
+     *             @OA\Property(property="message", type="string", example="Quantité en stock mise à jour")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=411,
+     *         description="Article non trouvé",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="integer", example=411),
+     *             @OA\Property(property="data", type="object"),
+     *             @OA\Property(property="message", type="string", example="Objet non trouvé")
+     *         )
+     *     )
+     * )
+     */
     public function updateStockById(Request $request, $id)
     {
         // Validation des données
@@ -144,7 +347,52 @@ class ArticleController extends Controller
             'message' => 'qte stock mis a jour'
         ], 200);
     }
-
+ /**
+     * @OA\Post(
+     *     path="/articles/stock",
+     *     summary="Mettre à jour la quantité en stock d'un article par ID",
+     *     tags={"Articles"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de l'article",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 type="object",
+     *                 required={"quantiteStock"},
+     *                 @OA\Property(property="quantiteStock", type="integer", example=15)
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Quantité mise à jour avec succès",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Quantité mise à jour avec succès"),
+     *             @OA\Property(property="article", type="object", 
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="libelle", type="string", example="Article Exemplar"),
+     *                 @OA\Property(property="prix", type="number", format="float", example=99.99),
+     *                 @OA\Property(property="quantiteStock", type="integer", example=15)
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=411,
+     *         description="Erreur de validation",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="errors", type="object", additionalProperties={"type":"array", "items":{"type":"string"}}),
+     *             @OA\Property(property="message", type="string", example="Erreur de validation")
+     *         )
+     *     )
+     * )
+     */
     public function updateStockByIds(Request $request)
     {
         // Validation des données

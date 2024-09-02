@@ -7,6 +7,61 @@ use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+/**
+ * @OA\Tag(
+ *     name="ClientUser",
+ *     description="Endpoints related to Client users"
+ * )
+ */
+
+/**
+ * @OA\Post(
+ *     path="/clients/{client}/add-user",
+ *     summary="Add a user to a client",
+ *     tags={"ClientUser"},
+ *     @OA\Parameter(
+ *         name="client",
+ *         in="path",
+ *         required=true,
+ *         @OA\Schema(type="integer"),
+ *         description="ID of the client"
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"nom", "prenom", "telephone", "login", "password"},
+ *             @OA\Property(property="nom", type="string", example="John"),
+ *             @OA\Property(property="prenom", type="string", example="Doe"),
+ *             @OA\Property(property="telephone", type="string", example="1234567890"),
+ *             @OA\Property(property="login", type="string", example="john.doe@example.com"),
+ *             @OA\Property(property="password", type="string", format="password", example="password123"),
+ *             @OA\Property(property="photo", type="string", format="binary")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=201,
+ *         description="User created successfully",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string", example="User created successfully"),
+ *             @OA\Property(property="user", ref="#/components/schemas/User")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Validation errors",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="errors", type="object")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Role not found",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="error", type="string", example="Role 'Client' not found.")
+ *         )
+ *     )
+ * )
+ */
 
 class ClientUserController extends Controller
 {

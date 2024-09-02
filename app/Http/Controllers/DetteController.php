@@ -25,6 +25,7 @@ public function createDette(Request $request)
     ], 201);
 }
 
+
 public function getDettes($clientId)
 {
     $client = Client::find($clientId);
