@@ -24,6 +24,12 @@ class Kernel extends HttpKernel
         
     ];
 
+    protected $routeMiddleware = [
+        // autres middlewares
+        'role' => \App\Http\Middleware\CheckRole::class,
+        
+    ];
+
     /**
      * The application's route middleware groups.
      *
@@ -65,10 +71,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
     ];
-    protected $routeMiddleware = [
-        // autres middlewares
-        'role' => \App\Http\Middleware\RoleMiddleware::class,
-        
-    ];
+   
     
 }

@@ -7,6 +7,9 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientUserController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\DetteController;
+use App\Http\Controllers\RoleController;
+use Laravel\Passport\Passport;
+
 use Laravel\Passport\Http\Controllers\{
     AccessTokenController,
     TransientTokenController,
@@ -17,6 +20,11 @@ use Laravel\Passport\Http\Controllers\{
     ScopeController,
     PersonalAccessTokenController
 };
+
+Route::post('/oauth/token', [AccessTokenController::class, 'issueToken']);
+Route::get('/oauth/authorize', [AuthorizationController::class, 'authorize']);
+Route::delete('/oauth/tokens/{token_id}', [AuthorizedAccessTokenController::class, 'destroy']);
+Route::post('/oauth/token/refresh', [TransientTokenController::class, 'refresh']);
 
 /*
 |--------------------------------------------------------------------------
@@ -30,37 +38,60 @@ use Laravel\Passport\Http\Controllers\{
 */
 
 // Public Routes
-//ajout user
-Route::post('register', [AuthController::class, 'register']);
+
 Route::post('login', [AuthController::class, 'login']);
-//ajout client
-Route::post('/clients', [ClientController::class, 'createClient']);
+// ->middleware('role:Admin')
+Route::middleware(['auth:api', 'role:Boutiquier'])->group(function () {
+        //ajout user
+Route::post('register', [AuthController::class, 'register']);
+// lister les coomptes users
+Route::get('/usersAll', [AuthController::class, 'listUsers']);
+// Lister tous les comptes utilisateurs ayant ce role et qui son active ou pas
+Route::get('/users', [AuthController::class, 'listUsersByRole']);
+// Lister les informations d'un client a partir de l'id
+Route::get('clients/{id}', [ClientController::class, 'showClient']);
+// Lister les dettes d'un client , les dettes affiches n'ont pas de details
+Route::post('clients/{id}/dettes', [ClientController::class, 'showClientDebts']);
+// Afficher les informations du client ainsi le compte user
+Route::post('clients/{id}/user', [ClientController::class, 'showClientWithUser']);
+
+});
 //ajout un compte utilisateur à un client
 Route::post('/clients/{client}/add-user', [ClientUserController::class, 'store'])->name('clients.addUser');
-//ajout article
-Route::post('/articles', [ArticleController::class, 'store']);
-// ->middleware('role:Boutiquier')
-//Lister ensemble des articles du stock
-Route::get('v1/articles', [ArticleController::class, 'index']);
 
-// obtenir un article par ID
-Route::get('v1/articles/{id}', [ArticleController::class, 'showById']);
-// obtenir un article par libellé
-Route::post('v1/articles/libelle', [ArticleController::class, 'showByLibelle']);
-// Mettre à jour la quantité en stock d'un article par ID
-Route::patch('v1/articles/{id}', [ArticleController::class, 'updateStockById']);
-// Mettre à jour la quantité en stock de plusieurs articles
-Route::post('v1/articles/stock', [ArticleController::class, 'updateStockByIds']);
-Route::prefix('v1')->group(function () {
+// ->middleware('role:Boutiquier')
+Route::middleware(['auth:api', 'role:Boutiquier'])->group(function () {
+        //ajout client
+Route::post('/clients', [ClientController::class, 'createClient']);
+    //ajout article
+Route::post('/articles', [ArticleController::class, 'store']);
+ Route::prefix('v1')->group(function () {
+        //Lister ensemble des articles du stock
+    Route::get('articles', [ArticleController::class, 'index']);
+    // obtenir un article par ID
+    Route::get('articles/{id}', [ArticleController::class, 'showById']);
+    // obtenir un article par libellé
+    Route::post('articles/libelle', [ArticleController::class, 'showByLibelle']);
+    // Mettre à jour la quantité en stock d'un article par ID
+    Route::patch('articles/{id}', [ArticleController::class, 'updateStockById']);
+    // Mettre à jour la quantité en stock de plusieurs articles
+    Route::post('articles/stock', [ArticleController::class, 'updateStockByIds']);
    // Lister les informations d'un client a partir de l'id
 Route::get('clients/{id}', [ClientController::class, 'showClient']);
+// Lister les dettes d'un client , les dettes affiches n'ont pas de details
+Route::post('clients/{id}/dettes', [ClientController::class, 'showClientDebts']);
 // Lister les dettes d'un client , les dettes affiches n'ont pas de details
 Route::post('clients/{id}/dettes', [ClientController::class, 'showClientDebts']);
 // Afficher les informations du client ainsi le compte user
 Route::post('clients/{id}/user', [ClientController::class, 'showClientWithUser']);
  // Créer une dette
  Route::post('dettes', [DetteController::class, 'createDette']);
+// lister tout les clients ou lister les clients avec compte ou sans compte et lister client avec compte active ou non
+Route::get('clients', [ClientController::class, 'listClients']);
+// rechercher un client par telephone
+Route::post('clients/telephone', [ClientController::class, 'searchClientByPhone']);
 
+});
 });
 
 // Authenticated Routes

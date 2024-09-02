@@ -10,7 +10,8 @@ use Illuminate\Notifications\Notifiable;
 use \Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Permission\Traits\HasRoles;
-class User extends Authenticatable
+
+class User extends Authenticatable  
 {
  
     use HasApiTokens, Notifiable, HasRoles;
@@ -28,11 +29,9 @@ class User extends Authenticatable
         'login',
         'password',
         'role_id',
+        'active',
     ];
-    public function roles()
-    {
-        return $this->belongsToMany(Role::class);
-    }
+   
 
     public function assignRole($role)
     {
@@ -60,12 +59,21 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-    public function hasRole($role, $guard = null): bool
-    {
-        return $this->roles()->where('name', $role)->exists();
-    }
-    public function role(): BelongsTo
+    public function role()
     {
         return $this->belongsTo(Role::class);
     }
+    
+
+    public function hasRole($role): bool
+    {
+        return $this->role && $this->role->name === $role;
+    }
+    
+
+    public function client()
+    {
+        return $this->hasOne(Client::class);
+    }
+    
 }

@@ -93,4 +93,59 @@ class ClientController extends Controller
             'message' => 'Client trouvé'
         ], 200);
     }
+    // lister les clients
+    // Lister les clients
+    public function listClients(Request $request)
+    {
+        // Récupérer les paramètres de la requête
+        $comptes = $request->query('comptes');
+        $active = $request->query('active');
+
+        // Définir la requête de base pour récupérer les clients
+        $query = Client::query();
+
+        // Appliquer les filtres selon les paramètres de la requête
+        if ($comptes === 'non') {
+            $query->whereHas('user');
+        } elseif ($comptes === 'oui') {
+            $query->whereDoesntHave('user');
+        }
+
+        if ($active === 'non') {
+            $query->whereHas('user', function($query) {
+                $query->whereNotNull('id'); // Assurez-vous que cette condition vérifie bien l'activité de l'utilisateur
+            });
+        } elseif ($active === 'oui') {
+            $query->whereDoesntHave('user');
+        }
+
+        // Récupérer les clients
+        $clients = $query->get();
+
+        // Retourner les informations des clients
+        return response()->json([
+            'clients' => $clients,
+            'message' => 'Liste des clients récupérée avec succès'
+        ], 200);
+    }
+    public function searchClientByPhone(Request $request)
+    {
+        // Validation des données d'entrée
+        $request->validate([
+            'telephone' => 'required|string|max:15',
+        ]);
+
+        // Récupération du numéro de téléphone depuis la requête
+        $telephone = $request->input('telephone');
+
+        // Recherche des clients avec le numéro de téléphone donné
+        $clients = Client::where('telephone', $telephone)->get();
+
+        // Retourner les informations des clients trouvés
+        return response()->json([
+            'clients' => $clients,
+            'message' => $clients->isEmpty() ? 'Aucun client trouvé' : 'Clients trouvés'
+        ], $clients->isEmpty() ? 404 : 200);
+    }
+
 }

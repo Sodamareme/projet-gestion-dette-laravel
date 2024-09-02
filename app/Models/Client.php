@@ -17,5 +17,11 @@ class Client extends Model
 {
     return $this->hasMany(Dette::class, 'client_id');
 }
+ // Déclarez la relation avec le modèle User si elle existe
+ public function user()
+ {
+     return $this->belongsTo(User::class);
+ }
+ 
     
 }

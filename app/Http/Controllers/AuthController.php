@@ -36,8 +36,10 @@ class AuthController extends Controller
         $user->assignRole($request->role);
 
         return response()->json([
-            'user' => $user,
-            'token' => $user->createToken('API Token')->accessToken,
+            $user = User::find(1),// Trouvez l'utilisateur par ID
+      $token = $user->createToken('Token Name')->accessToken,
+            // 'user' => $user,
+            // 'token' => $user->createToken('API Token')->accessToken,
         ], 201);
     }
 
@@ -52,8 +54,9 @@ class AuthController extends Controller
         $credentials = $request->only('login', 'password');
     
         if (Auth::attempt($credentials)) {
+            /**  @var \App\Models\User $user **/
             $user = Auth::user(); // Obtenez l'utilisateur actuellement authentifié
-            $token = $user->createToken('MyAppToken')->accessToken; // Utilisez accessToken pour obtenir le jeton
+            $token = $user->createToken('api_token')->accessToken; // Utilisez accessToken pour obtenir le jeton
             return response()->json([
                 'status' => 200,
                 'data' => ['token' => $token],
@@ -66,6 +69,58 @@ class AuthController extends Controller
                 'message' => 'Invalid Credentials'
             ], 401);
         }
+    }
+
+    public function listUsers()
+    {
+        // Récupérer tous les utilisateurs
+        $users = User::all();
+    
+        // Vérifier si la liste des utilisateurs est vide
+        if ($users->isEmpty()) {
+            return response()->json([
+                'data' => null,
+                'message' => 'Aucun utilisateur trouvé'
+            ], 200);
+        }
+    
+        // Retourner la liste des utilisateurs
+        return response()->json([
+            'data' => $users,
+            'message' => 'Liste des utilisateurs récupérée avec succès'
+        ], 200);
+    }
+    
+    public function listUsersByRole(Request $request)
+    {
+        // Récupérer le rôle depuis les paramètres de la requête
+        $roleName = $request->query('role');
+
+        if (!$roleName) {
+            return response()->json([
+                'data' => null,
+                'message' => 'Le rôle est requis.'
+            ], 400);
+        }
+
+        // Trouver le rôle correspondant
+        $role = \App\Models\Role::where('name', $roleName)->first();
+
+        if (!$role) {
+            return response()->json([
+                'data' => null,
+                'message' => 'Rôle non trouvé'
+            ], 404);
+        }
+
+        // Récupérer les utilisateurs avec le rôle spécifié
+        $users = User::where('role_id', $role->id)->get();
+
+        // Retourner la liste des utilisateurs ou null si la liste est vide
+        return response()->json([
+            'data' => $users->isEmpty() ? null : $users,
+            'message' => $users->isEmpty() ? 'Aucun utilisateur trouvé avec ce rôle' : 'Liste des utilisateurs récupérée avec succès'
+        ], 200);
     }
     
 }

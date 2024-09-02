@@ -16,7 +16,9 @@ return new class extends Migration
     public function up()
     {
         Schema::table('dettes', function (Blueprint $table) {
-            $table->decimal('montantDu', 8, 2)->after('montant'); // Exemple de type
+            if (!Schema::hasColumn('dettes', 'montantDu')) {
+                $table->decimal('montantDu', 8, 2)->nullable();
+            }
         });
     }
 

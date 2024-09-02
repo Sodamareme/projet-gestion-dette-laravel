@@ -11,14 +11,10 @@ class ArticleController extends Controller
 {
     public function store(Request $request)
     {
+        // $this->authorize('access', Article::class);
         // Récupérer l'utilisateur connecté
         $user = Auth::user();
  
-        // // Vérifier que l'utilisateur est bien un Boutiquier
-        // if (!$user || !$user->hasRole('Boutiquier')) {
-        //     return response()->json(['message' => 'Unauthorized'], 403);
-        // }
-
         // Validation des données
         $validator = Validator::make($request->all(), [
             'libelle' => 'required|string|max:255|unique:articles',
