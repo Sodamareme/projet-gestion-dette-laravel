@@ -1,0 +1,511 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "My API Documentation",
+        "description": "This is the API documentation for my Laravel application.",
+        "contact": {
+            "email": "support@example.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Register a new user",
+                "operationId": "registerUser",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nom",
+                                    "prenom",
+                                    "telephone",
+                                    "photo",
+                                    "login",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "nom": {
+                                        "type": "string",
+                                        "example": "John"
+                                    },
+                                    "prenom": {
+                                        "type": "string",
+                                        "example": "Doe"
+                                    },
+                                    "telephone": {
+                                        "type": "string",
+                                        "example": "123456789"
+                                    },
+                                    "photo": {
+                                        "type": "string",
+                                        "example": "photos/photo.jpg"
+                                    },
+                                    "login": {
+                                        "type": "string",
+                                        "example": "user@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User registered successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 201
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "user": {
+                                                    "$ref": "#/components/schemas/User"
+                                                },
+                                                "token": {
+                                                    "type": "string",
+                                                    "example": "your-jwt-token"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User Registered Successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 400
+                                        },
+                                        "data": {
+                                            "type": "null"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation Error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login user",
+                "operationId": "a3b306d14572d1f4bd6c064b3233e7b8",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "login",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "login": {
+                                        "type": "string",
+                                        "example": "user@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful login",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "token": {
+                                                    "type": "string",
+                                                    "example": "your-jwt-token"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Login Successful"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 401
+                                        },
+                                        "data": {
+                                            "type": "null"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Invalid Credentials"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/clients": {
+            "get": {
+                "tags": [
+                    "Clients"
+                ],
+                "summary": "List clients",
+                "operationId": "24bc4620ac92bdf18458e017d5a6307e",
+                "parameters": [
+                    {
+                        "name": "comptes",
+                        "in": "query",
+                        "description": "Filter clients by comptes",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A list of clients",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Client"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Clients"
+                ],
+                "summary": "Create a new client",
+                "operationId": "85171dfc3a4ea754d223efa15689306e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "surnom",
+                                    "telephone"
+                                ],
+                                "properties": {
+                                    "surnom": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "telephone": {
+                                        "type": "string",
+                                        "example": "1234567890"
+                                    },
+                                    "adresse": {
+                                        "type": "string",
+                                        "example": "123 Main St"
+                                    },
+                                    "photo": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Client created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "client": {
+                                            "$ref": "#/components/schemas/Client"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    }
+                }
+            }
+        },
+        "/clients/telephone": {
+            "post": {
+                "tags": [
+                    "Clients"
+                ],
+                "summary": "Rechercher un client par numéro de téléphone",
+                "operationId": "7a96a40fa7f17ab4cff2d7da8f570dd4",
+                "parameters": [
+                    {
+                        "name": "telephone",
+                        "in": "query",
+                        "description": "Numéro de téléphone du client",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Clients trouvés",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "clients": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Client"
+                                            }
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Clients trouvés"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Aucun client trouvé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "clients": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Client"
+                                            }
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Aucun client trouvé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "User": {
+                "required": [
+                    "id",
+                    "nom",
+                    "prenom",
+                    "telephone",
+                    "photo",
+                    "login",
+                    "role_id"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nom": {
+                        "type": "string",
+                        "example": "John"
+                    },
+                    "prenom": {
+                        "type": "string",
+                        "example": "Doe"
+                    },
+                    "telephone": {
+                        "type": "string",
+                        "example": "123456789"
+                    },
+                    "photo": {
+                        "type": "string",
+                        "example": "photos/photo.jpg"
+                    },
+                    "login": {
+                        "type": "string",
+                        "example": "user@example.com"
+                    },
+                    "role_id": {
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "Client": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "surnom": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "telephone": {
+                        "type": "string",
+                        "example": "1234567890"
+                    },
+                    "adresse": {
+                        "type": "string",
+                        "example": "123 Main St"
+                    },
+                    "photo": {
+                        "type": "string",
+                        "example": "path/to/photo.jpg"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-01-01T00:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-01-01T00:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "ClientUser": {
+                "required": [
+                    "nom",
+                    "prenom",
+                    "telephone"
+                ],
+                "properties": {
+                    "nom": {
+                        "type": "string",
+                        "example": "Doe"
+                    },
+                    "prenom": {
+                        "type": "string",
+                        "example": "John"
+                    },
+                    "telephone": {
+                        "type": "string",
+                        "example": "1234567890"
+                    },
+                    "adresse": {
+                        "type": "string",
+                        "example": "123 Main St"
+                    },
+                    "photo": {
+                        "type": "string",
+                        "format": "binary"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "BearerToken": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+                "description": "JWT authorization header using the Bearer scheme."
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Auth"
+        },
+        {
+            "name": "Clients",
+            "description": "Clients"
+        }
+    ],
+    "security": [
+        {
+            "BearerToken": []
+        }
+    ]
+}

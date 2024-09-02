@@ -11,7 +11,7 @@ class UserPolicy
    public function isAdmin(User $user){
     return $user->role === 'Admin';
    }
-   public function isBoutiqier(User $user){
+   public function isBoutiquier(User $user){
     return $user->role === 'Boutiquier';
    }
    public function isClient(User $user){

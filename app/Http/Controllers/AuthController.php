@@ -6,8 +6,85 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+/**
+ * @OA\Info(
+ *     title="My API Documentation",
+ *     version="1.0.0",
+ *     description="This is the API documentation for my Laravel application.",
+ *     @OA\Contact(
+ *         email="support@example.com"
+ *     ),
+ *     @OA\License(
+ *         name="Apache 2.0",
+ *         url="http://www.apache.org/licenses/LICENSE-2.0.html"
+ *     )
+ * )
+ */
+
+/**
+ * @OA\Schema(
+ *     schema="User",
+ *     type="object",
+ *     required={"id", "nom", "prenom", "telephone", "photo", "login", "role_id"},
+ *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(property="nom", type="string", example="John"),
+ *     @OA\Property(property="prenom", type="string", example="Doe"),
+ *     @OA\Property(property="telephone", type="string", example="123456789"),
+ *     @OA\Property(property="photo", type="string", example="photos/photo.jpg"),
+ *     @OA\Property(property="login", type="string", example="user@example.com"),
+ *     @OA\Property(property="role_id", type="integer", example=1)
+ * )
+ */
 class AuthController extends Controller
 {
+    /**
+     * @OA\Post(
+     *     path="/api/register",
+     *     tags={"Auth"},
+     *     summary="Register a new user",
+     *     operationId="registerUser",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 type="object",
+     *                 required={"nom", "prenom", "telephone", "photo", "login", "password"},
+     *                 @OA\Property(property="nom", type="string", example="John"),
+     *                 @OA\Property(property="prenom", type="string", example="Doe"),
+     *                 @OA\Property(property="telephone", type="string", example="123456789"),
+     *                 @OA\Property(property="photo", type="string", example="photos/photo.jpg"),
+     *                 @OA\Property(property="login", type="string", example="user@example.com"),
+     *                 @OA\Property(property="password", type="string", example="password")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="User registered successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="integer", example=201),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="user", ref="#/components/schemas/User"),
+     *                 @OA\Property(property="token", type="string", example="your-jwt-token")
+     *             ),
+     *             @OA\Property(property="message", type="string", example="User Registered Successfully")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Validation Error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="integer", example=400),
+     *             @OA\Property(property="data", type="null"),
+     *             @OA\Property(property="message", type="string", example="Validation Error")
+     *         )
+     *     )
+     * )
+     */
+
     public function register(Request $request)
     {
         $request->validate([
@@ -42,7 +119,43 @@ class AuthController extends Controller
             // 'token' => $user->createToken('API Token')->accessToken,
         ], 201);
     }
-
+  
+/**
+ * @OA\Post(
+ *     path="/api/login",
+ *     summary="Login user",
+ *     tags={"Auth"},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"login", "password"},
+ *             @OA\Property(property="login", type="string", example="user@example.com"),
+ *             @OA\Property(property="password", type="string", example="password"),
+ *         ),
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Successful login",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="status", type="integer", example=200),
+ *             @OA\Property(property="data", type="object",
+ *                 @OA\Property(property="token", type="string", example="your-jwt-token")
+ *             ),
+ *             @OA\Property(property="message", type="string", example="Login Successful"),
+ *         ),
+ *     ),
+ *     @OA\Response(
+ *         response=401,
+ *         description="Invalid credentials",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="status", type="integer", example=401),
+ *             @OA\Property(property="data", type="null"),
+ *             @OA\Property(property="message", type="string", example="Invalid Credentials"),
+ *         ),
+ *     )
+ * )
+ */
+    
     public function login(Request $request)
     {
         $request->validate([

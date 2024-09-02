@@ -41,7 +41,7 @@ Route::post('/oauth/token/refresh', [TransientTokenController::class, 'refresh']
 
 Route::post('login', [AuthController::class, 'login']);
 // ->middleware('role:Admin')
-Route::middleware(['auth:api', 'role:Boutiquier'])->group(function () {
+Route::middleware(['auth:api', 'role:Admin'])->group(function () {
         //ajout user
 Route::post('register', [AuthController::class, 'register']);
 // lister les coomptes users
