@@ -13,85 +13,13 @@
         "version": "1.0.0"
     },
     "paths": {
-        "/articles": {
-            "get": {
-                "tags": [
-                    "Articles"
-                ],
-                "summary": "Lister tous les articles",
-                "operationId": "89181b74a8aa4d580750ede6aa32f92a",
-                "parameters": [
-                    {
-                        "name": "disponible",
-                        "in": "query",
-                        "description": "Filtrer les articles en fonction de leur disponibilité",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "oui",
-                                "non"
-                            ]
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Liste des articles",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "integer",
-                                            "example": 200
-                                        },
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "libelle": {
-                                                        "type": "string",
-                                                        "example": "Article Exemplar"
-                                                    },
-                                                    "prix": {
-                                                        "type": "number",
-                                                        "format": "float",
-                                                        "example": 99.99
-                                                    },
-                                                    "quantiteStock": {
-                                                        "type": "integer",
-                                                        "example": 10
-                                                    }
-                                                },
-                                                "type": "object"
-                                            }
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Liste des articles"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "204": {
-                        "description": "Aucun article trouvé"
-                    }
-                }
-            },
+        "/api/articles": {
             "post": {
                 "tags": [
                     "Articles"
                 ],
                 "summary": "Créer un nouvel article",
-                "operationId": "ce06e2544b80bc76b184c771c0fb2e7e",
+                "operationId": "e328bed23caf889ad982ad3f1180bccb",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -189,13 +117,87 @@
                 }
             }
         },
-        "/articles/{id}": {
+        "/api/v1/articles": {
+            "get": {
+                "tags": [
+                    "Articles"
+                ],
+                "summary": "Lister tous les articles",
+                "operationId": "2bb6d18420d6929d1d4175ace6521d21",
+                "parameters": [
+                    {
+                        "name": "disponible",
+                        "in": "query",
+                        "description": "Filtrer les articles en fonction de leur disponibilité",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "oui",
+                                "non"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste des articles",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "libelle": {
+                                                        "type": "string",
+                                                        "example": "Article Exemplar"
+                                                    },
+                                                    "prix": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 99.99
+                                                    },
+                                                    "quantiteStock": {
+                                                        "type": "integer",
+                                                        "example": 10
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Liste des articles"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "Aucun article trouvé"
+                    }
+                }
+            }
+        },
+        "/api/v1/articles/{id}": {
             "get": {
                 "tags": [
                     "Articles"
                 ],
                 "summary": "Obtenir un article par ID",
-                "operationId": "1b7f12632112347a8e1e05fa74d139fd",
+                "operationId": "9575c7e13030c7d9007799d1f7a6d3e0",
                 "parameters": [
                     {
                         "name": "id",
@@ -280,7 +282,7 @@
                     "Articles"
                 ],
                 "summary": "Mettre à jour la quantité en stock d'un article par ID",
-                "operationId": "dea7ba3d66dd5039f92d028e8f84028d",
+                "operationId": "cf2eb9ab0d0680af30a7e92555ba9efa",
                 "parameters": [
                     {
                         "name": "id",
@@ -376,13 +378,13 @@
                 }
             }
         },
-        "/articles/libelle": {
+        "/api/v1/articles/libelle": {
             "post": {
                 "tags": [
                     "Articles"
                 ],
                 "summary": "Obtenir un article par libellé",
-                "operationId": "aae3a73168aea14e743b423dfd574177",
+                "operationId": "f6c52e461d8a18a11f3eedeb32a496d4",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -471,36 +473,24 @@
                 }
             }
         },
-        "/articles/stock": {
+        "/api/v1/articles/stock": {
             "post": {
                 "tags": [
                     "Articles"
                 ],
                 "summary": "Mettre à jour la quantité en stock d'un article par ID",
-                "operationId": "f2a8609f1976e13858dfbe6262158a43",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID de l'article",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
+                "operationId": "2219635d8dee5640f4ea3622520ce255",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": [
-                                    "quantiteStock"
-                                ],
                                 "properties": {
-                                    "quantiteStock": {
-                                        "type": "integer",
-                                        "example": 15
+                                    "articles": {
+                                        "type": "array",
+                                        "items": {
+                                            "$ref": "UpdateStockRequest"
+                                        }
                                     }
                                 },
                                 "type": "object"
@@ -772,13 +762,13 @@
                 }
             }
         },
-        "/usersAll": {
+        "/api/usersAll": {
             "get": {
                 "tags": [
                     "Users"
                 ],
                 "summary": "Liste tous les utilisateurs",
-                "operationId": "03f62a411dd7c13fb8585eee32800a61",
+                "operationId": "1c6e7d07425452e1ffb86bc9b61d1416",
                 "responses": {
                     "200": {
                         "description": "Liste des utilisateurs récupérée avec succès",
@@ -824,13 +814,13 @@
                 }
             }
         },
-        "/users": {
+        "/api/users": {
             "get": {
                 "tags": [
                     "Users"
                 ],
                 "summary": "Liste les utilisateurs par rôle",
-                "operationId": "489cb9ba2f3e94c68e0d584695508a1b",
+                "operationId": "bc1ecdb248b62c14519ef2715f8b404e",
                 "parameters": [
                     {
                         "name": "role",
@@ -907,42 +897,6 @@
             }
         },
         "/clients": {
-            "get": {
-                "tags": [
-                    "Clients"
-                ],
-                "summary": "lister tout les clients ou lister les clients avec compte ou sans compte et lister client avec compte active ou non",
-                "operationId": "24bc4620ac92bdf18458e017d5a6307e",
-                "parameters": [
-                    {
-                        "name": "comptes",
-                        "in": "query",
-                        "description": "Filter clients by comptes",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "A list of clients",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Client"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request"
-                    }
-                }
-            },
             "post": {
                 "tags": [
                     "Clients"
@@ -1293,13 +1247,51 @@
                 }
             }
         },
-        "/clients/telephone": {
+        "/api/v1/clients": {
+            "get": {
+                "tags": [
+                    "Clients"
+                ],
+                "summary": "lister tout les clients ou lister les clients avec compte ou sans compte et lister client avec compte active ou non",
+                "operationId": "80111a48069f373019f723cc05edd57f",
+                "parameters": [
+                    {
+                        "name": "comptes",
+                        "in": "query",
+                        "description": "Filter clients by comptes",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A list of clients",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Client"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request"
+                    }
+                }
+            }
+        },
+        "/api/v1/clients/telephone": {
             "post": {
                 "tags": [
                     "Clients"
                 ],
                 "summary": "Rechercher un client par numéro de téléphone",
-                "operationId": "7a96a40fa7f17ab4cff2d7da8f570dd4",
+                "operationId": "91ec9314217b992cbe1c306fe77bb848",
                 "parameters": [
                     {
                         "name": "telephone",
@@ -1359,13 +1351,13 @@
                 }
             }
         },
-        "/clients/{client}/add-user": {
+        "/api/clients/{client}/add-user": {
             "post": {
                 "tags": [
                     "ClientUser"
                 ],
                 "summary": "Add a user to a client",
-                "operationId": "90dc18e53bb48a90896325a92bfd8ca7",
+                "operationId": "3c9a6e10f654cbdd7960eb30ad8e1893",
                 "parameters": [
                     {
                         "name": "client",

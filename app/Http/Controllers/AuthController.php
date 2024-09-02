@@ -178,7 +178,7 @@ class AuthController extends Controller
     }
 /**
  * @OA\Get(
- *     path="/usersAll",
+ *     path="/api/usersAll",
  *     summary="Liste tous les utilisateurs",
  *     tags={"Users"},
  *     @OA\Response(
@@ -220,7 +220,7 @@ class AuthController extends Controller
     }
     /**
  * @OA\Get(
- *     path="/users",
+ *     path="/api/users",
  *     summary="Liste les utilisateurs par rôle",
  *     tags={"Users"},
  *     @OA\Parameter(

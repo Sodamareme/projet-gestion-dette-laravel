@@ -16,7 +16,7 @@ class ArticleController extends Controller
 {
   /**
      * @OA\Post(
-     *     path="/articles",
+     *     path="/api/articles",
      *     summary="Créer un nouvel article",
      *     tags={"Articles"},
      *     @OA\RequestBody(
@@ -83,7 +83,7 @@ class ArticleController extends Controller
     }
        /**
      * @OA\Get(
-     *     path="/articles",
+     *     path="/api/v1/articles",
      *     summary="Lister tous les articles",
      *     tags={"Articles"},
      *     @OA\Parameter(
@@ -150,7 +150,7 @@ class ArticleController extends Controller
     }
   /**
      * @OA\Get(
-     *     path="/articles/{id}",
+     *     path="/api/v1/articles/{id}",
      *     summary="Obtenir un article par ID",
      *     tags={"Articles"},
      *     @OA\Parameter(
@@ -206,7 +206,7 @@ class ArticleController extends Controller
     }
  /**
      * @OA\Post(
-     *     path="/articles/libelle",
+     *     path="/api/v1/articles/libelle",
      *     summary="Obtenir un article par libellé",
      *     tags={"Articles"},
      *     @OA\RequestBody(
@@ -275,7 +275,7 @@ class ArticleController extends Controller
     }
       /**
      * @OA\Patch(
-     *     path="/articles/{id}",
+     *     path="/api/v1/articles/{id}",
      *     summary="Mettre à jour la quantité en stock d'un article par ID",
      *     tags={"Articles"},
      *     @OA\Parameter(
@@ -349,26 +349,12 @@ class ArticleController extends Controller
     }
  /**
      * @OA\Post(
-     *     path="/articles/stock",
+     *     path="/api/v1/articles/stock",
      *     summary="Mettre à jour la quantité en stock d'un article par ID",
      *     tags={"Articles"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID de l'article",
-     *         @OA\Schema(type="integer")
-     *     ),
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\MediaType(
-     *             mediaType="application/json",
-     *             @OA\Schema(
-     *                 type="object",
-     *                 required={"quantiteStock"},
-     *                 @OA\Property(property="quantiteStock", type="integer", example=15)
-     *             )
-     *         )
+     *         @OA\JsonContent(type="object", @OA\Property(property="articles", type="array", @OA\Items(ref="UpdateStockRequest")))
      *     ),
      *     @OA\Response(
      *         response=200,

@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Validator;
 
 /**
  * @OA\Post(
- *     path="/clients/{client}/add-user",
+ *     path="/api/clients/{client}/add-user",
  *     summary="Add a user to a client",
  *     tags={"ClientUser"},
  *     @OA\Parameter(

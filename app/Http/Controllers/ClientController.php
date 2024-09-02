@@ -278,7 +278,7 @@ class ClientController extends Controller
     }
    /**
      * @OA\Get(
-     *     path="/clients",
+     *     path="/api/v1/clients",
      *     summary="lister tout les clients ou lister les clients avec compte ou sans compte et lister client avec compte active ou non",
      *     tags={"Clients"},
      *     @OA\Parameter(
@@ -338,7 +338,7 @@ class ClientController extends Controller
     }
    /**
  * @OA\Post(
- *     path="/clients/telephone",
+ *     path="/api/v1/clients/telephone",
  *     summary="Rechercher un client par numéro de téléphone",
  *     tags={"Clients"},
  *     @OA\Parameter(
