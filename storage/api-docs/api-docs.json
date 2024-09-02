@@ -896,13 +896,13 @@
                 }
             }
         },
-        "/clients": {
+        "/api/clients": {
             "post": {
                 "tags": [
                     "Clients"
                 ],
                 "summary": "Create a new client",
-                "operationId": "85171dfc3a4ea754d223efa15689306e",
+                "operationId": "7378216e9a0a1a2f8b57962c9e7533f0",
                 "requestBody": {
                     "required": true,
                     "content": {

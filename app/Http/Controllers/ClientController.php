@@ -30,7 +30,7 @@ class ClientController extends Controller
 {
 /**
  * @OA\Post(
- *     path="/clients",
+ *     path="/api/clients",
  *     summary="Create a new client",
  *     tags={"Clients"},
  *     @OA\RequestBody(
@@ -84,7 +84,7 @@ class ClientController extends Controller
  }
  /**
  * @OA\Get(
- *     path="/clients/{id}",
+ *     path="/api/v1/clients/{id}",
  *     summary="Obtenir les informations d'un client par ID",
  *     description="Récupère les informations d'un client en utilisant son ID.",
  *     tags={"Clients"},
@@ -143,7 +143,7 @@ class ClientController extends Controller
  }
 /**
  * @OA\Post(
- *     path="/clients/{id}/dettes",
+ *     path="/api/v1/clients/{id}/dettes",
  *     summary="Obtenir les dettes d'un client par ID",
  *     description="Récupère les informations d'un client ainsi que ses dettes en utilisant son ID.",
  *     tags={"Clients"},
@@ -213,7 +213,7 @@ class ClientController extends Controller
  }
     /**
      * @OA\Post(
-     *     path="/clients/{id}/user",
+     *     path="/api/v1/clients/{id}/user",
      *     summary="Afficher les informations du client avec son utilisateur associé",
      *     description="Récupère les informations d'un client ainsi que les informations de l'utilisateur associé en utilisant l'ID du client.",
      *     tags={"Clients"},
