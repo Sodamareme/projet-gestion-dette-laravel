@@ -1,9 +1,11 @@
 <?php
 namespace App\Providers;
 
+use App\Services\AuthentificationPassport;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;
-
+use App\Services\AuthentificationServiceInterface;
+use App\Services\AuthentificationService;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -11,7 +13,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(AuthentificationServiceInterface::class, AuthentificationPassport::class);
+    
     }
 
     /**

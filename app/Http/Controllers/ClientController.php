@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Facades\ClientServiceFacade;
 /**
  * @OA\Tag(
  *     name="Clients",
@@ -28,6 +29,10 @@ use Illuminate\Support\Facades\Storage;
 
 class ClientController extends Controller
 {
+    protected $ClientServiceFacade;
+    public function __construct(ClientServiceFacade $ClientServiceFacade){
+        $this->ClientServiceFacade = $ClientServiceFacade;
+    }
 /**
  * @OA\Post(
  *     path="/api/clients",

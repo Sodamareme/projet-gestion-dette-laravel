@@ -957,14 +957,14 @@
                 }
             }
         },
-        "/clients/{id}": {
+        "/api/v1/clients/{id}": {
             "get": {
                 "tags": [
                     "Clients"
                 ],
                 "summary": "Obtenir les informations d'un client par ID",
                 "description": "Récupère les informations d'un client en utilisant son ID.",
-                "operationId": "e71e872edf8bbb1364990cc3d2c2d99c",
+                "operationId": "1c35e93ebe76b6f2c4e034ce931d665e",
                 "parameters": [
                     {
                         "name": "id",
@@ -1042,14 +1042,14 @@
                 }
             }
         },
-        "/clients/{id}/dettes": {
+        "/api/v1/clients/{id}/dettes": {
             "post": {
                 "tags": [
                     "Clients"
                 ],
                 "summary": "Obtenir les dettes d'un client par ID",
                 "description": "Récupère les informations d'un client ainsi que ses dettes en utilisant son ID.",
-                "operationId": "d436fa683d5e4f44c8adbccf9866d823",
+                "operationId": "cb9ed52b82b96906e9edcc2578d59cb8",
                 "parameters": [
                     {
                         "name": "id",
@@ -1152,14 +1152,14 @@
                 }
             }
         },
-        "/clients/{id}/user": {
+        "/api/v1/clients/{id}/user": {
             "post": {
                 "tags": [
                     "Clients"
                 ],
                 "summary": "Afficher les informations du client avec son utilisateur associé",
                 "description": "Récupère les informations d'un client ainsi que les informations de l'utilisateur associé en utilisant l'ID du client.",
-                "operationId": "acef199a7dd17e6d307af6dc596690c3",
+                "operationId": "978bedd4aefd0990da2432b424939ca8",
                 "parameters": [
                     {
                         "name": "id",

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use App\Services\AuthenticationServiceInterface;
+
 /**
  * @OA\Tag(
  *     name="Clients",
@@ -30,6 +32,13 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+
+    protected $authService;
+
+    public function __construct(AuthenticationServiceInterface $authService)
+    {
+        $this->authService = $authService;
+    }
     /**
      * @OA\Post(
      *     path="/api/register",
@@ -149,32 +158,46 @@ class AuthController extends Controller
  * )
  */
     
+    // public function login(Request $request)
+    // {
+    //     $request->validate([
+    //         'login' => 'required|string',
+    //         'password' => 'required|string',
+    //     ]);
+    
+    //     $credentials = $request->only('login', 'password');
+    //     $token = $this->authService->authenticate($credentials);
+    
+    //     if (Auth::attempt($credentials)) {
+    //         /**  @var \App\Models\User $user **/
+    //         $user = Auth::user(); // Obtenez l'utilisateur actuellement authentifié
+    //         $token = $user->createToken('api_token')->accessToken; // Utilisez accessToken pour obtenir le jeton
+    //         return response()->json([
+    //             'status' => 200,
+    //             'data' => ['token' => $token],
+    //             'message' => 'Login Successful'
+    //         ]);
+    //     } else {
+    //         return response()->json([
+    //             'status' => 401,
+    //             'data' => null,
+    //             'message' => 'Invalid Credentials'
+    //         ], 401);
+    //     }
+    // }
     public function login(Request $request)
     {
-        $request->validate([
-            'login' => 'required|string',
-            'password' => 'required|string',
-        ]);
-    
-        // Assurez-vous que vous utilisez le champ correct pour l'identifiant de l'utilisateur
-        $credentials = $request->only('login', 'password');
-    
-        if (Auth::attempt($credentials)) {
-            /**  @var \App\Models\User $user **/
-            $user = Auth::user(); // Obtenez l'utilisateur actuellement authentifié
-            $token = $user->createToken('api_token')->accessToken; // Utilisez accessToken pour obtenir le jeton
-            return response()->json([
-                'status' => 200,
-                'data' => ['token' => $token],
-                'message' => 'Login Successful'
-            ]);
-        } else {
-            return response()->json([
-                'status' => 401,
-                'data' => null,
-                'message' => 'Invalid Credentials'
-            ], 401);
-        }
+        return $this->authService->authenticate($request);
+    }
+
+    // public function refreshToken(Request $request)
+    // {
+    //     return $this->authService->refreshToken($request);
+    // }
+
+    public function logout()
+    {
+        return $this->authService->logout();
     }
 /**
  * @OA\Get(

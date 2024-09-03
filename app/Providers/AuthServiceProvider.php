@@ -3,33 +3,39 @@
 namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Laravel\Passport\Passport;
-use App\Policies\ArticlePolicy;
+use Illuminate\Support\Facades\Gate;
 use App\Models\Article;
 use App\Models\User;
 use App\Policies\UserPolicy;
-use Illuminate\Support\Facades\Gate;
+use Laravel\Passport\Passport;
 
 class AuthServiceProvider extends ServiceProvider
 {
+    /**
+     * Les policies pour les modèles.
+     *
+     * @var array
+     */
     protected $policies = [
+        Article::class => UserPolicy::class,
         User::class => UserPolicy::class,
+        // Ajoutez d'autres policies ici si nécessaire
     ];
 
+    /**
+     * Enregistrez les services d'autorisation.
+     *
+     * @return void
+     */
     public function boot()
     {
         $this->registerPolicies();
-      Gate::define('Admin', [UserPolicy::class, 'isAdmin']);
-        // Register Passport routes
-        // Passport::routes();
-        
-        // // Optional: Configure Passport tokens
-        // Passport::tokensExpireIn(now()->addDays(15));
-        // Passport::refreshTokensExpireIn(now()->addDays(30));
-        // Passport::personalAccessTokensExpireIn(now()->addMonths(6));
-        // Configure Passport tokens
-    Passport::tokensExpireIn(now()->addMinutes(5)); // Short-lived access tokens
-    Passport::refreshTokensExpireIn(now()->addDays(30)); // Refresh tokens expire in 30 days
-    Passport::personalAccessTokensExpireIn(now()->addMonths(6)); // Personal access tokens expire in 6 months
+  // Définir les scopes disponibles
+    Passport::tokensCan([
+        'view-user-data' => 'Voir les données utilisateur',
+        'admin' => 'Accès administrateur',
+    ]);
+        // Vous pouvez également définir des gates ici si nécessaire
+        Gate::define('access-articles', [UserPolicy::class, 'access']);
     }
 }
