@@ -92,12 +92,11 @@ Route::post('clients/{id}/user', [ClientController::class, 'showClientWithUser']
 Route::get('clients', [ClientController::class, 'listClients']);
 // rechercher un client par telephone
 Route::post('clients/telephone', [ClientController::class, 'searchClientByPhone']);
+
+});
+});
 // code card
 Route::get('/client/{id}/card', [ClientEtUserController::class, 'getClientCard']);
-
-});
-});
-
 // Authenticated Routes
 Route::middleware(['auth:api'])->group(function () {
     Route::get('/user', function (Request $request) {

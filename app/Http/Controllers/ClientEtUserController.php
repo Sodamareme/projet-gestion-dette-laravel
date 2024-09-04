@@ -11,7 +11,8 @@ use App\Models\Role;
 use Illuminate\Support\Facades\DB; // Importer DB correctement
 use Endroid\QrCode\QrCode; // Correct import for Endroid QR code
 use Endroid\QrCode\Writer\PngWriter; // Correct import for PngWriter
-
+use App\Mail\LoyaltyCardMail;
+use Illuminate\Support\Facades\Mail;
 /**
  * @OA\Schema(
  *     schema="User",
@@ -195,9 +196,13 @@ class ClientEtUserController extends Controller
      
          $qr_code_path = asset('storage/qrcodes/' . $client->user_id . '.png');
      
-         return response()->json([
+         // Envoyer l'email avec la carte de fidélité
+         Mail::to($client->user->email)->send(new LoyaltyCardMail($client, $qr_code_path));
+     
+         return view('qrcode', [
              'client' => $client,
              'qr_code_url' => $qr_code_path
          ]);
      }
+
 }
