@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Services\Client\UploadService;
 class Client extends Model
 {
     // Définir les attributs qui peuvent être attribués en masse

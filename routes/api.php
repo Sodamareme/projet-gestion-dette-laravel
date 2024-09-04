@@ -9,6 +9,8 @@ use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\DetteController;
 use App\Http\Controllers\RoleController;
 use Laravel\Passport\Passport;
+use App\Http\Controllers\ClientEtUserController;
+use App\Models\Client;
 
 use Laravel\Passport\Http\Controllers\{
     AccessTokenController,
@@ -44,6 +46,8 @@ Route::post('login', [AuthController::class, 'login']);
 Route::middleware(['auth:api', 'role:Admin'])->group(function () {
         //ajout user
 Route::post('register', [AuthController::class, 'register']);
+// ajout user et client en meme temps
+Route::post('/user-client', [ClientEtUserController::class, 'createUserAndClient']);
 // lister les comptes users
 Route::get('/usersAll', [AuthController::class, 'listUsers']);
 // Lister tous les comptes utilisateurs ayant ce role et qui son active ou pas
@@ -88,6 +92,8 @@ Route::post('clients/{id}/user', [ClientController::class, 'showClientWithUser']
 Route::get('clients', [ClientController::class, 'listClients']);
 // rechercher un client par telephone
 Route::post('clients/telephone', [ClientController::class, 'searchClientByPhone']);
+// code card
+Route::get('/client/{id}/card', [ClientEtUserController::class, 'getClientCard']);
 
 });
 });

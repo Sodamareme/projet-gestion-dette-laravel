@@ -5,6 +5,10 @@ use App\Models\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Facades\ClientServiceFacade;
+use App\Services\Client\ClientServiceImpl;
+use App\Services\Client\ClientServiceInterface ;
+use App\Services\Client\PhotoServiceInterface;
+use App\Services\Client\UploadService;
 /**
  * @OA\Tag(
  *     name="Clients",
@@ -29,10 +33,15 @@ use App\Facades\ClientServiceFacade;
 
 class ClientController extends Controller
 {
-    protected $ClientServiceFacade;
-    public function __construct(ClientServiceFacade $ClientServiceFacade){
-        $this->ClientServiceFacade = $ClientServiceFacade;
+    private $clientService;
+    private $photoService;
+
+    public function __construct(ClientServiceInterface $clientService, PhotoServiceInterface $photoService)
+    {
+        $this->clientService = $clientService;
+        $this->photoService = $photoService;
     }
+    
 /**
  * @OA\Post(
  *     path="/api/clients",
@@ -40,12 +49,15 @@ class ClientController extends Controller
  *     tags={"Clients"},
  *     @OA\RequestBody(
  *         required=true,
- *         @OA\JsonContent(
- *             required={"surnom", "telephone"},
- *             @OA\Property(property="surnom", type="string", example="John Doe"),
- *             @OA\Property(property="telephone", type="string", example="1234567890"),
- *             @OA\Property(property="adresse", type="string", example="123 Main St"),
- *             @OA\Property(property="photo", type="string", format="binary")
+ *         @OA\MediaType(
+ *             mediaType="multipart/form-data",
+ *             @OA\Schema(
+ *                 required={"surnom", "telephone", "photo"},
+ *                 @OA\Property(property="surnom", type="string", example="John Doe"),
+ *                 @OA\Property(property="telephone", type="string", example="1234567890"),
+ *                 @OA\Property(property="adresse", type="string", example="123 Main St"),
+ *                 @OA\Property(property="photo", type="string", format="binary")
+ *             )
  *         )
  *     ),
  *     @OA\Response(
@@ -61,32 +73,33 @@ class ClientController extends Controller
  *     )
  * )
  */
-    public function createClient(Request $request)
-    {
-        // Validation des données d'entrée
-        $request->validate([
-            'surnom' => 'required|string|max:255',
-            'telephone' => 'required|string|max:15|unique:clients',
-            'adresse' => 'nullable|string|max:255',
-            'photo' => 'nullable|image|max:2048',
-        ]);
 
-        // Stockage de la photo si présente
-        $photoPath = $request->file('photo') ? $request->file('photo')->store('photos', 'public') : null;
+public function createClient(Request $request)
+{
+    // Validate the incoming request data
+    $request->validate([
+        'surnom' => 'required|string|max:255',
+        'telephone' => 'required|string|max:15|unique:clients',
+        'adresse' => 'nullable|string|max:255',
+        'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+    ]);
 
-        // Création du client
-        $client = Client::create([
-            'surnom' => $request->surnom,
-            'telephone' => $request->telephone,
-            'adresse' => $request->adresse,
-            'photo' => $photoPath,
-        ]);
+    // Convert and store the photo using the PhotoService
+    $base64Photo = $this->photoService->convertAndStorePhoto($request->file('photo'));
 
-        // Retour de la réponse JSON avec le client créé
-        return response()->json([
-            'client' => $client,
-        ], 201);
- }
+    // Prepare client data
+    $clientData = $request->only(['surnom', 'telephone', 'adresse']);
+    $clientData['photo'] = $base64Photo;
+
+    // Use the client service to create a new client
+    $client = $this->clientService->createClient($clientData);
+
+    // Return a JSON response with the created client
+    return response()->json([
+        'client' => $client,
+    ], 201);
+}
+
  /**
  * @OA\Get(
  *     path="/api/v1/clients/{id}",

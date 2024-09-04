@@ -2,7 +2,7 @@
 
 namespace App\Facades;
 
-use App\Services\ClientServiceInterface;
+use App\Services\Client\ClientServiceInterface;
 use Illuminate\Support\Facades\Facade;
 
 class ClientServiceFacade extends Facade

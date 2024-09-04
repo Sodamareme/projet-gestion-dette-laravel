@@ -7,6 +7,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use App\Services\AuthenticationServiceInterface;
+use Illuminate\Support\Facades\Response;
+use App\Facades; // Import de la Facade
+use App\Services\Client\ClientServiceImpl;
+use App\Services\Client\PhotoServiceInterface;
+use App\Services\Client\UploadService;
 
 /**
  * @OA\Tag(
@@ -34,10 +39,16 @@ class AuthController extends Controller
 {
 
     protected $authService;
-
-    public function __construct(AuthenticationServiceInterface $authService)
-    {
+    protected $clientService;
+    private $photoService;
+   
+    public function __construct(
+        AuthenticationServiceInterface $authService,
+        ClientServiceImpl $clientService,PhotoServiceInterface $photoService
+    ) {
         $this->authService = $authService;
+        $this->clientService = $clientService;
+        $this->photoService = $photoService;
     }
     /**
      * @OA\Post(
@@ -87,9 +98,11 @@ class AuthController extends Controller
      * )
      */
 
-    public function register(Request $request)
-    {
-        $request->validate([
+
+     public function register(Request $request)
+     {
+       
+        $validatedData = $request->validate([
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
             'telephone' => 'required|string|max:15|unique:users',
@@ -98,29 +111,23 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
             'role_id' => 'required|exists:roles,id',
         ]);
-       // Gérer l'upload de la photo si nécessaire
-         $photoPath = $request->file('photo') ? $request->file('photo')->store('photos', 'public') : null;
-
-         // Créer l'utilisateur
-         $user = User::create([
-            'nom' => $request->nom,
-            'prenom' => $request->prenom,
-            'telephone' => $request->telephone,
-            'photo' => $photoPath,
-            'login' => $request->login,
-            'password' => Hash::make($request->password),
-            'role_id' => $request->role_id, // Assigner le rôle par ID
-        ]);
-          // Assigner le rôle à l'utilisateur
-        $user->assignRole($request->role);
-
-        return response()->json([
-            $user = User::find(1),// Trouvez l'utilisateur par ID
-      $token = $user->createToken('Token Name')->accessToken,
-            // 'user' => $user,
-            // 'token' => $user->createToken('API Token')->accessToken,
-        ], 201);
+       // Vérifiez si une photo a été téléchargée
+    if ($request->hasFile('photo')) {
+        // Convertir la photo en base64
+        $base64Photo = $this->photoService->convertAndStorePhoto($request->file('photo'));
+        // Ajouter la photo en base64 aux données validées
+        $validatedData['photo'] = $base64Photo;
     }
+
+    // Appel au service pour créer l'utilisateur avec les données validées
+    $user = $this->clientService->register($validatedData);
+
+        return Response::json([
+            'user' => $user,
+            'token' => $user->createToken('API Token')->accessToken,
+        ], 201);
+     }
+     
   
 /**
  * @OA\Post(

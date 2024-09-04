@@ -1,14 +1,17 @@
 <?php
 
-namespace App\Services;
-
+namespace App\Services\Client;
+use App\Services\Client\UploadService;
 use App\Repositories\ClientRepositoryInterface;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
-use App\Services\UploadService;
 use App\Facades\UploadFacade;
 use App\Facades\ClientServiceFacade;
+use App\Models\user;
 use App\Models\Client;
+use App\Services\Client\ClientServiceInterface;
+use Illuminate\Support\Facades\Hash; 
+use Illuminate\Http\UploadedFile;
 
 class ClientServiceImpl implements ClientServiceInterface
 {
@@ -18,6 +21,26 @@ class ClientServiceImpl implements ClientServiceInterface
     // {
     //     $this->clientRepository = $clientRepository;
     // }
+    public function register(array $data): User
+    {
+         // Handle photo upload and conversion
+         $photoPath = $data['photo'] ?? null;
+
+        // Créer l'utilisateur
+        $user = User::create([
+            'nom' => $data['nom'],
+            'prenom' => $data['prenom'],
+            'telephone' => $data['telephone'],
+            'photo' => $photoPath,
+            'login' => $data['login'],
+            'password' => Hash::make($data['password']),
+            'role_id' => $data['role_id'], // Assigner le rôle par ID
+        ]);
+        // Assigner le rôle à l'utilisateur
+        $user->assignRole($data['role_id']);
+
+        return $user;
+    }
 
     public function getAllClients(array $filters = []): Collection 
     {
@@ -31,23 +54,20 @@ class ClientServiceImpl implements ClientServiceInterface
 
     public function createClient(array $data): Client
     {
-        // Traitement de la photo
-        if (isset($data['photo']) && $data['photo'] instanceof \Illuminate\Http\UploadedFile) {
-            // $data['photo'] = $data['photo']->store('photos', 'public');
-             $data['photo'] = UploadFacade::uploadImage($data['photo']);;
-        }
-
-        $userData = isset($data['user']) ? [
-            'nom' => $data['user']['nom'],
-            'prenom' => $data['user']['prenom'],
-            'login' => $data['user']['login'],
-            'password' => bcrypt($data['user']['password']),
-            'etat' => $data['user']['etat'],
-            'role_id' => $data['user']['role'],
-        ] : null;
-
-        return $this->clientRepository->create($data, $userData);
+        // Handle photo upload and conversion
+        $photoPath = $data['photo'] ?? null;
+    
+        // Create the client
+        $client = Client::create([
+            'surnom' => $data['surnom'],
+            'telephone' => $data['telephone'],
+            'adresse' => $data['adresse'] ?? null,
+            'photo' => $photoPath,
+        ]);
+    
+        return $client;
     }
+    
 
     public function getClientById($id): ?Client
     {

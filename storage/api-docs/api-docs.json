@@ -906,11 +906,12 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "required": [
                                     "surnom",
-                                    "telephone"
+                                    "telephone",
+                                    "photo"
                                 ],
                                 "properties": {
                                     "surnom": {

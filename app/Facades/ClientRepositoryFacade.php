@@ -1,7 +1,7 @@
 <?php
 namespace App\Facades;
 
-use App\Repositories\ClientRepositoryInterface;
+use App\Repositories\ClientServiceFacade;
 use Illuminate\Support\Facades\Facade;
 
 class ClientRepositoryFacade extends Facade

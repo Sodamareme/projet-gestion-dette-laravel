@@ -7,6 +7,12 @@ use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Services\Client\PhotoServiceInterface;
+use App\Services\Client\UserServiceInterface;
+use App\Services\Client\ClientUserServiceInterface;
+use App\Services\Client\FileManagementInterface;
+use App\Services\Client\ValidationInterface;
+use App\Services\Client\UploadService;
 /**
  * @OA\Tag(
  *     name="ClientUser",
@@ -63,43 +69,56 @@ use Illuminate\Support\Facades\Validator;
  * )
  */
 
-class ClientUserController extends Controller
-{
-    public function store(Request $request)
-    {
-        // Validation des données
-        $validator = Validator::make($request->all(), [
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'telephone' => 'required|string|max:20',
-            'login' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Validation pour l'image
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        // Récupération du rôle "Client" à partir de la table `roles`
-        $role = Role::where('name', 'Client')->first();
-
-        // Vérifier si le rôle "Client" existe
-        if (!$role) {
-            return response()->json(['error' => 'Role "Client" not found.'], 404);
-        }
-
-        // Création de l'utilisateur
-        $user = User::create([
-            'nom' => $request->input('nom'),
-            'prenom' => $request->input('prenom'),
-            'telephone' => $request->input('telephone'),
-            'photo' => $request->file('photo') ? $request->file('photo')->store('photos', 'public') : null,
-            'login' => $request->input('login'),
-            'password' => Hash::make($request->input('password')),
-            'role_id' => $role->id, // Ajoute l'id du rôle "Client"
-        ]);
-
-        return response()->json(['message' => 'User created successfully', 'user' => $user], 201);
-    }
-}
+ class ClientUserController extends Controller
+ {
+     protected $validationService;
+     protected $fileManagementService;
+     protected $userService;
+     private $photoService;
+ 
+     public function __construct(
+         ValidationInterface $validationService,
+         FileManagementInterface $fileManagementService,
+         ClientUserServiceInterface $userService,
+         PhotoServiceInterface $photoService
+     ) {
+         $this->validationService = $validationService;
+         $this->fileManagementService = $fileManagementService;
+         $this->userService = $userService;
+         $this->photoService = $photoService;
+     }
+ 
+     public function store(Request $request)
+     {
+         // Validation des données
+         $validator = $this->validationService->validate($request);
+ 
+         if ($validator->fails()) {
+             return response()->json(['errors' => $validator->errors()], 422);
+         }
+ 
+         // Récupération du rôle "Client"
+         $role = Role::where('name', 'Client')->first();
+ 
+         if (!$role) {
+             return response()->json(['error' => 'Role "Client" not found.'], 404);
+         }
+ 
+         $validatedData = $validator->validated();
+ 
+         if ($request->hasFile('photo')) {
+             // Convertir la photo en base64
+             $base64Photo = $this->photoService->convertAndStorePhoto($request->file('photo'));
+             // Ajouter la photo en base64 aux données validées
+             $validatedData['photo'] = $base64Photo;
+         }
+ 
+         // Ajouter le rôle à l'utilisateur
+         $validatedData['role_id'] = $role->id;
+ 
+         // Création de l'utilisateur
+         $user = $this->userService->store($validatedData);
+ 
+         return response()->json(['message' => 'User created successfully', 'user' => $user], 201);
+     }
+ }

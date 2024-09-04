@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Client;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -25,12 +25,5 @@ class UploadService
      * @param string $path
      * @return string
      */
-    public function getImageAsBase64(string $path): string
-    {
-        $image = Storage::disk('public')->get($path);
-        $type = pathinfo($path, PATHINFO_EXTENSION);
-        $base64 = base64_encode($image);
-        
-        return 'data:image/' . $type . ';base64,' . $base64;
-    }
+
 }
